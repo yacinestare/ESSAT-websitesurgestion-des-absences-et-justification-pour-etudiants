@@ -1,0 +1,66 @@
+<?php
+include "db_conn.php";
+
+$sdate1 = $_POST['sdate1'];
+$sdate2 = $_POST['sdate2'];
+$sdate3 = $_POST['sdate3'];
+$idetu = $_POST['idetu'];
+$idmod = $_POST['idmod'];
+$idspec = $_POST['sspec'];
+$idsem = $_POST['ssem'];
+
+?>
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>HOME</title>
+
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+</head>
+
+<body>
+<?php
+
+
+$sql2 = "SELECT * FROM abscence where num_ins_etu='$idetu';";
+$req2 = mysqli_query($conn, $sql2);
+while($row2 = mysqli_fetch_assoc($req2)) {
+$nabs = $row2['num_abs'];
+$dabs = $row2['date_abs'];
+$Date2 = date('Y-m-d', strtotime($dabs . " + 2 day"));
+ 
+if(strtotime($dabs )<=strtotime($Date2) ) {
+  $Date3 = date('Y-m-d', strtotime($sdate1));
+  $Date4 = date('Y-m-d', strtotime($sdate2));
+  if(strtotime($dabs )<=strtotime($Date4)  && strtotime($dabs )>=strtotime($Date3) ) {
+  $sql = "INSERT INTO justification (date_debut_just, date_fin_just, date_arrive_just, num_abs, num_ins_etu)
+  VALUES ('$sdate1', '$sdate2', '$sdate3', '$nabs','$idetu')";
+       
+    if (mysqli_query($conn, $sql)) {
+       
+      } else {
+        echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+      }
+    }
+}
+
+}
+
+
+
+
+?>
+<form action="abs.php" method="post">
+<input type="hidden" name="smod"   value=<?php echo $idmod; ?> >
+<input type="hidden" name="sspec"   value=<?php echo $idspec; ?>>
+<input type="hidden" name="ssem"    value=<?php echo $idsem; ?>>
+<button type="submit" >Valider la justification</button>
+
+</form>
+</body>
+
+</html>

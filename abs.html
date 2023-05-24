@@ -1,0 +1,133 @@
+<?php 
+include "db_conn.php";
+
+if(!isset($_POST['smod']) )
+
+{  
+   header("Location: home.php?error=vou n avez pas choisit de module !!!!!"); 
+     exit();
+}   
+else if(!isset($_POST['sspec']) )
+
+{
+   header("Location: home.php?error=vou n avez pas choisit de specialite !!!!!"); 
+   exit();
+}  
+else if(!isset($_POST['ssem']) )
+
+{
+   header("Location: home.php?error=vou n avez pas choisit de semestre !!!!!"); 
+   exit();
+} 
+  
+ ?>
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>HOME</title>
+
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+</head>
+
+<body>
+
+     <h1> <?php 
+       $sspec= $_POST['sspec'];
+       $sql = "SELECT * FROM specialite  WHERE idsp='$sspec'";
+       
+      $result = mysqli_query($conn, $sql);
+       while($row = mysqli_fetch_assoc($result)) { 
+       $nomspec= $row['nom_sp'];
+       $promo= $row['promo_sp'];
+       echo  $promo.' annee '.$nomspec;
+       }
+       ?> </h1>
+       <h1> <?php 
+       $smod= $_POST['smod'];
+       $sql = "SELECT nom_mod FROM module  WHERE id_mod='$smod'";
+       
+      $result = mysqli_query($conn, $sql);
+       while($row = mysqli_fetch_assoc($result)) { 
+       $nommod= $row['nom_mod'];
+       echo  $nommod;
+       }
+       ?> </h1>
+       <h1> <?php 
+       $ssem= $_POST['ssem'];
+       $sql = "SELECT * FROM semestre  WHERE ids='$ssem'";
+       
+      $result = mysqli_query($conn, $sql);
+       while($row = mysqli_fetch_assoc($result)) { 
+       $nom= $row['nom_s'];
+       echo  $nom;
+       }
+       ?> </h1>
+    
+      <table border = '2px';>
+       <tr id="id_table">
+         <th width="150px" height="150px" bgcolor="blue">num_ins_etu</th>
+         <th width="150px" height="150px" bgcolor="blue">nom_etu</th>
+         <th width="150px" height="150px" bgcolor="blue">prenom-etu</th>
+         <th width="150px" height="150px" bgcolor="blue">date_naiss_etu</th>
+         <th width="150px" height="150px" bgcolor="blue">nombre absence</th>
+         <th width="150px" height="150px" bgcolor="blue">nombre absence justifie </th>
+         <th width="150px" height="150px" bgcolor="red">mettre_abs</th>
+         <th width="150px" height="150px" bgcolor="green">justifier</th>
+         </tr>
+     
+        <?php 
+        $sql = "SELECT * FROM etudiant  WHERE idsp='$sspec'";
+       
+        $req = mysqli_query($conn, $sql);
+         while($row = mysqli_fetch_assoc($req)) {
+             ?>
+             <tr  id="id_table">
+                <td><?=$row['num_ins_etu']?></td>
+                <td><?=$row['nom_etu']?></td>
+                <td><?=$row['prenom_etu']?></td>
+                <td><?=$row['date_nais_etu']?></td>
+                <?php 
+                      $nins = $row['num_ins_etu'];
+                      $sql3 = "SELECT * FROM abscence  WHERE num_ins_etu='$nins'";
+       
+                      $req3 = mysqli_query($conn, $sql3);
+                      $nba =0; $nbj =0;
+                      while($row3 = mysqli_fetch_assoc($req3)) {
+                      $nba++;
+                      $nabsss = $row3['num_abs'];
+                      $sql4 = "SELECT * FROM justification  WHERE num_abs='$nabsss'";
+                      $req4 = mysqli_query($conn, $sql4);
+                      
+                      while($row4 = mysqli_fetch_assoc($req4)) {
+                      $nbj++;
+                      }  
+
+                      
+                      
+                      }
+                      ?>
+                      <td><?=$nba?></td>
+                      <td><?=$nbj?></td>
+                      
+                
+                <td><a  href="mabs.php?id=<?=$row['num_ins_etu']?>&nommod=<?=$nommod?>&idmod=<?=$smod?>&spec=<?=$sspec?>&sem=<?=$ssem?>"> mettre absent </a> </td>
+                <td><a  href="justification.php?id=<?=$row['num_ins_etu']?>&nommod=<?=$nommod?>&idmod=<?=$smod?>&spec=<?=$sspec?>&sem=<?=$ssem?>"> justifier </a> </td>
+             </tr>
+             <?php 
+}
+
+ ?>  
+      
+      </table>     
+           
+     <a href="logout.php">Logout</a>
+
+</body>
+
+</html>
+
